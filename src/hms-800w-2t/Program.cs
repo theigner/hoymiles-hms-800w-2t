@@ -19,8 +19,8 @@ public class Program
             return;
         }
 
-        InverterConnector connector = new InverterConnector(new IPEndPoint(address, 10081));
-        if (connector.TryGetInverterState(out var response))
+        IHoymilesInverterConnector connector = new InverterConnector(new IPEndPoint(address, Constants.DtuPort));
+        if (connector.TryGetRealDataNew(out var response))
         {
             JsonFormatter formatter = new JsonFormatter(JsonFormatter.Settings.Default.WithIndentation());
             Console.WriteLine(formatter.Format(response));
