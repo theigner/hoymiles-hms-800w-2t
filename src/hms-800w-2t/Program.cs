@@ -19,7 +19,7 @@ public class Program
             return;
         }
 
-        IHoymilesInverterConnector connector = new InverterConnector(new IPEndPoint(address, Constants.DtuPort));
+        IHoymilesInverterConnector connector = new HoymilesInverterConnector(new IPEndPoint(address, Constants.DtuPort));
         if (connector.TryGetRealDataNew(out var response))
         {
             JsonFormatter formatter = new JsonFormatter(JsonFormatter.Settings.Default.WithIndentation());

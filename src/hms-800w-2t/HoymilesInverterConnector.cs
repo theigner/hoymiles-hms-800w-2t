@@ -1,17 +1,16 @@
 ﻿using Google.Protobuf;
 using System.Net;
 using System.Net.Sockets;
-using System.Reflection.Metadata;
 
 namespace hms800w2t;
 
-public class InverterConnector : IHoymilesInverterConnector
+public class HoymilesInverterConnector : IHoymilesInverterConnector
 {
     private readonly IPEndPoint _inverterEndPoint;
 
     private ushort _sequence = 0;
 
-    public InverterConnector(IPEndPoint inverterEndPoint)
+    public HoymilesInverterConnector(IPEndPoint inverterEndPoint)
     {
         _inverterEndPoint = inverterEndPoint;
     }
@@ -60,25 +59,21 @@ public class InverterConnector : IHoymilesInverterConnector
 
         try
         {
-            using (var client = new TcpClient())
-            {
-                client.Connect(_inverterEndPoint);
+            using var client = new TcpClient();
+            client.Connect(_inverterEndPoint);
 
-                using (var stream = client.GetStream())
-                {
-                    stream.WriteTimeout = 5000;
-                    stream.ReadTimeout = 5000;
+            using var stream = client.GetStream();
+            stream.WriteTimeout = 5000;
+            stream.ReadTimeout = 5000;
 
-                    stream.Write(message.ToArray(), 0, (int)message.Length);
+            stream.Write(message.ToArray(), 0, (int)message.Length);
 
-                    var buf = new byte[1024];
-                    var read = stream.Read(buf, 0, buf.Length);
+            var buffer = new byte[1024];
+            var read = stream.Read(buffer, 0, buffer.Length);
 
-                    response = buf.Skip(10).Take(read - 10).ToArray();
+            response = buffer.Skip(10).Take(read - 10).ToArray();
 
-                    return true;
-                }
-            }
+            return true;
         }
         catch (Exception e)
         {
